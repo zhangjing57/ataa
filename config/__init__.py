@@ -12,7 +12,7 @@ default_opts = [
     cfg.StrOpt('loglevel', default="Debug", help='the level of log'),
     cfg.StrOpt('master_image_id', default="", help='the master image id'),
     cfg.StrOpt('master_flavor_id', default="", help='the master flavor id'),
-    cfg.StrOpt('api_url', default="", help='the url of api request'),
+    cfg.ListOpt('api_url', default=[], help='the url of api request'),
     cfg.ListOpt('nameservers', default=[], help='the cluster router id'),
 ]
 
@@ -97,7 +97,7 @@ CONF.register_group(cinder_group)
 CONF.register_opts(cinder_opts, cinder_group)
 
 # 数据库
-database_group = cfg.OptGroup(name='database', title='database')
+database_group = cfg.OptGroup(name='mysql', title='database')
 database_opts = [
     cfg.StrOpt('connection', default='mysql+pymysql://root:HworLIIDvmTRsPfQauNskuJF8PcoTuULfu3dEHFg@10.220.'
                                      '56.254:3306/dingoops?charset=utf8mb3', help='the mysql url'),
@@ -105,3 +105,12 @@ database_opts = [
 # 注册mysql数据库
 CONF.register_group(database_group)
 CONF.register_opts(database_opts, database_group)
+
+# 数据库
+sqlite_group = cfg.OptGroup(name='sqlite', title='database')
+sqlite_opts = [
+    cfg.StrOpt('path', default='', help='the sqlite path'),
+]
+# 注册sqlite数据库
+CONF.register_group(sqlite_group)
+CONF.register_opts(sqlite_opts, sqlite_group)
