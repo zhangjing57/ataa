@@ -2,7 +2,6 @@ from contextlib import asynccontextmanager
 from fastapi import FastAPI
 from api import api_router
 
-
 PROJECT_NAME = "auto_test"
 
 app = FastAPI(

@@ -1,7 +1,3 @@
-# 数据表对应的model对象
-
-from __future__ import annotations
-
 from sqlalchemy import Column, String, Text, DateTime, Integer, Boolean
 from sqlalchemy.orm import declarative_base
 
@@ -9,7 +5,7 @@ Base = declarative_base()
 
 # 集群对象
 class Cluster(Base):
-    __tablename__ = "ops_cluster_info"
+    __tablename__ = "cluster"
 
     id = Column(String(length=128), primary_key= True, nullable=False, index=True, unique=False)
     name = Column(String(length=128), primary_key= True, nullable=False, index=True, unique=False)
@@ -38,28 +34,3 @@ class Cluster(Base):
     gpu_mem =  Column(Integer, nullable=True)
     extra = Column(Text, nullable=True)
     private_key = Column(Text, nullable=True)
-
-class ClusterParams(Base):
-    __tablename__ = "ops_cluster_params"
-
-#     image = Column(String(length=128), primary_key= True, nullable=False, index=True, unique=False)
-#     k8s_version = Column(String(length=128), primary_key= True, nullable=False, index=True, unique=False)
-#     runtime = Column(String(length=128), nullable=True)
-#     network_plugin = Column(String(length=128), nullable=True)
-#     kube_proxy = Column(String(length=128), nullable=True)
-#     service_cidr = Column(String(length=128), nullable=True)
-#     lb_enable = Column(String(length=128), nullable=True)
-    key = Column(String(length=128), primary_key= True, nullable=False, index=True, unique=False)
-    value = Column(String(length=255), nullable=True)
-# 节点对象
-class Taskinfo(Base):
-    __tablename__ = "ops_task_info"
-
-    id = Column(Integer, primary_key= True, nullable=False, index=True, unique=False)
-    cluster_id = Column(String(length=128), nullable=True)
-    task_id = Column(String(length=128), nullable=True)
-    state = Column(String(length=128), nullable=True)
-    msg = Column(String(length=128), nullable=True)
-    detail = Column(String(length=128), default=0, nullable= False)
-    start_time = Column(DateTime, nullable=True)
-    end_time = Column(DateTime, nullable=True)

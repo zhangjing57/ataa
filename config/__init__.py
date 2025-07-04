@@ -10,10 +10,9 @@ default_group = cfg.OptGroup(name='DEFAULT', title='default conf data')
 
 default_opts = [
     cfg.StrOpt('loglevel', default="Debug", help='the level of log'),
-    cfg.StrOpt('master_image_id', default="", help='the master image id'),
-    cfg.StrOpt('master_flavor_id', default="", help='the master flavor id'),
+    cfg.StrOpt('log_path', default="", help='the path of log'),
+    cfg.StrOpt('sqlite_path', default="", help='the path of sqlite file'),
     cfg.ListOpt('api_url', default=[], help='the url of api request'),
-    cfg.ListOpt('nameservers', default=[], help='the cluster router id'),
 ]
 
 CONF.register_group(default_group)
