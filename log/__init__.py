@@ -7,6 +7,8 @@ log_path= CONF.DEFAULT.log_path
 
 def init_logger(service_name):
     logger = logging.getLogger(service_name)
+    if logger.handlers:  # 如果已有 Handler，直接返回
+        return logger
     logger.setLevel(log_level)  # 设置日志级别
 
     # 创建专属文件处理器

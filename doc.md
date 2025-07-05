@@ -774,3 +774,189 @@ async def websocket_endpoint(websocket: WebSocket, task_id: str):
 - https://docs.celeryq.dev/en/stable/getting-started/next-steps.html  
 
 - https://fastapi.tiangolo.com/tutorial/background-tasks/ [citation:3]
+
+
+
+
+
+
+
+
+
+
+
+
+
+以下是针对你的FastAPI应用的启动方案详解，结合性能、生产部署和开发便利性进行多维度对比：
+
+一、基础启动方案（开发环境适用）
+
+1. 直接Uvicorn命令行启动
+
+uvicorn main:app --host 0.0.0.0 --port 5678 --reload
+
+• 优点  
+
+  • 热重载支持（--reload）：代码修改后自动重启，开发效率高  
+
+  • 简单易用：无需修改代码，适合快速验证  
+
+• 缺点  
+
+  • 单进程运行：无法利用多核CPU，性能瓶颈明显  
+
+  • 非生产级：缺乏进程监控，崩溃后不会自动恢复  
+
+• 适用场景：本地开发调试
+
+2. 代码内嵌Uvicorn启动
+
+if __name__ == '__main__':
+    uvicorn.run("main:app", reload=True, host="0.0.0.0", port=5678)
+
+• 优点  
+
+  • 与Python生态无缝集成：可直接用python main.py启动  
+
+  • 方便传递复杂参数：如动态加载SSL证书  
+
+• 缺点  
+
+  • 阻塞主线程：无法在运行时执行其他后台任务（如你的cluster_status_syncer）  
+
+  • 热重载稳定性较差：复杂项目可能触发异常重启  
+
+二、高性能方案（生产环境推荐）
+
+1. Gunicorn + Uvicorn Worker多进程
+
+gunicorn -w 4 -k uvicorn.workers.UvicornWorker -b 0.0.0.0:5678 main:app
+
+• 核心优势  
+
+  • 多进程并行：-w 4启动4个Worker（建议值：2 * CPU核心数 + 1）  
+
+  • 异步非阻塞：Uvicorn Worker原生支持async/await，最大化I/O密集型性能  
+
+  • 资源隔离：单个Worker崩溃不影响整体服务  
+
+• 配置优化建议  
+  # gunicorn.conf.py
+  import multiprocessing
+  workers = multiprocessing.cpu_count() * 2 + 1  # 动态计算Worker数
+  bind = "0.0.0.0:5678"
+  worker_class = "uvicorn.workers.UvicornWorker"
+  timeout = 300  # 防止僵死进程
+  
+• 注意：  
+
+  • 需在虚拟环境中安装gunicorn和uvicorn  
+
+  • 生命周期适配：多进程下lifespan会在每个Worker启动时执行，需确保cluster_status_syncer支持多实例协同
+
+2. Supervisor进程守护（增强稳定性）
+
+# /etc/supervisor/conf.d/auto_test.conf
+[program:auto_test]
+command=/path/to/venv/bin/gunicorn -c gunicorn.conf.py main:app
+directory=/path/to/project
+autostart=true
+autorestart=true
+user=deploy_user
+stderr_logfile=/var/log/auto_test_err.log
+stdout_logfile=/var/log/auto_test_out.log
+
+• 核心价值  
+
+  • 崩溃自动重启：保障服务7x24小时可用  
+
+  • 日志集中管理：避免日志丢失  
+
+  • 系统启动时自启：通过sudo supervisorctl enable auto_test实现  
+
+• 操作流程  
+  sudo supervisorctl reread
+  sudo supervisorctl update
+  sudo supervisorctl start auto_test
+  
+
+三、容器化部署方案（云原生环境）
+
+Dockerfile示例
+
+FROM python:3.10-slim
+WORKDIR /app
+COPY requirements.txt .
+RUN pip install --no-cache-dir -r requirements.txt
+COPY . .
+CMD ["gunicorn", "-c", "gunicorn.conf.py", "main:app"]
+
+• 启动命令  
+  docker build -t auto_test .
+  docker run -d -p 5678:5678 --name auto_test_container auto_test
+  
+• 优势  
+
+  • 环境一致性：避免"在我机器上能跑"问题  
+
+  • 资源限制：可通过--cpus, --memory控制资源  
+
+• 适配建议  
+
+  • 将cluster_status_syncer改为Kubernetes Job/CronJob，避免多副本冲突  
+
+四、方案性能对比与选型建议
+
+方案 并发能力 稳定性 开发便利性 适用场景
+
+Uvicorn命令行 ⭐ ⭐ ⭐⭐⭐⭐⭐ 本地开发
+
+代码内嵌Uvicorn ⭐ ⭐⭐ ⭐⭐⭐⭐ 简单脚本
+
+Gunicorn+Uvicorn Worker ⭐⭐⭐⭐⭐ ⭐⭐⭐⭐ ⭐⭐⭐ 生产主力方案
+
+Supervisor守护 ⭐⭐⭐⭐ ⭐⭐⭐⭐⭐ ⭐⭐ 生产环境加固
+
+Docker容器化 ⭐⭐⭐⭐ ⭐⭐⭐⭐ ⭐⭐ 云环境部署
+
+高性能终极方案：  
+
+Gunicorn + Uvicorn Worker + Supervisor 组合  
+
+- 用Gunicorn管理多进程  
+
+- Uvicorn Worker提供异步能力  
+
+- Supervisor保障进程持续运行  
+
+五、针对你代码的特殊优化点
+
+1. 生命周期事件适配  
+   • 多进程下每个Worker都会触发lifespan → 需确保cluster_status_syncer设计为幂等操作或改用独立进程（如Celery）
+   # 方案：增加共享锁避免重复启动
+   import filelock
+   with filelock.FileLock("syncer.lock"):
+       if not cluster_status_syncer.is_running():
+           cluster_status_syncer.start()
+   
+
+2. 日志配置升级  
+   • 生产环境应关闭FastLOG的控制台输出，改用RotatingFileHandler防止磁盘占满
+   # log/logger.py 优化
+   handler = RotatingFileHandler("app.log", maxBytes=100*1024*1024, backupCount=10)
+   
+
+3. 后台任务监控  
+   • 在/v1/health接口中暴露cluster_status_syncer状态：
+   @app.get("/v1/health")
+   def health_check():
+       return {"syncer_alive": cluster_status_syncer.is_alive()}
+   
+
+立即实施建议：  
+
+1. 开发阶段 → uvicorn main:app --reload --port 5678  
+
+2. 生产部署 → Gunicorn+Uvicorn Worker + Supervisor守护  
+
+3. 紧急修复现有任务 → 在TaskService().handle_task_exist()中增加事务锁

@@ -98,8 +98,7 @@ CONF.register_opts(cinder_opts, cinder_group)
 # 数据库
 database_group = cfg.OptGroup(name='mysql', title='database')
 database_opts = [
-    cfg.StrOpt('connection', default='mysql+pymysql://root:HworLIIDvmTRsPfQauNskuJF8PcoTuULfu3dEHFg@10.220.'
-                                     '56.254:3306/dingoops?charset=utf8mb3', help='the mysql url'),
+    cfg.StrOpt('connection', default='', help='the mysql url'),
 ]
 # 注册mysql数据库
 CONF.register_group(database_group)

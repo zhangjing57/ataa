@@ -1,0 +1,12 @@
+master_image: ""
+master_flavor: ""
+mysql: ""
+nova:
+  auth_url: ""
+  auth_type: ""
+  project_domain: ""
+  user_domain: ""
+  project_name: ""
+  user_name: ""
+  password: ""
+  region_name: ""
