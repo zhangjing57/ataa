@@ -1,0 +1,2 @@
+cluster_id: ""
+depend_on: create_k8s_cluster

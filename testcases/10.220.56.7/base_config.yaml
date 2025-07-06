@@ -1,6 +1,9 @@
 master_image: ""
 master_flavor: ""
 mysql: ""
+project_id: 294c4ae34a5843ebba117cf6a665cfcf
+user_id: 2861b2989a3746df86fb847b4ee95e68
+region_name: RegionOne
 nova:
   auth_url: ""
   auth_type: ""

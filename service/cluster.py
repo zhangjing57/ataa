@@ -1,4 +1,5 @@
 import sqlite3
+import requests
 
 
 class ClusterService:
@@ -15,14 +16,23 @@ class ClusterService:
     def create_cluster_info(self):
         pass
 
-    def create_cluster(self, data):
+    def create_k8s_cluster(self, data):
+        pass
+
+    def scale_k8s_node(self, data):
+        pass
+
+    def remove_k8s_node(self, data):
+        pass
+
+    def create_classic_cluster(self, data):
+        pass
+
+    def scale_classic_node(self, data):
+        pass
+
+    def remove_classic_node(self, data):
         pass
 
     def delete_cluster(self, data):
-        pass
-
-    def scale_node(self, data):
-        pass
-
-    def remove_node(self, data):
         pass

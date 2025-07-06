@@ -1,12 +1,16 @@
-master_image: ""
-master_flavor: ""
-mysql: ""
-nova:
-  auth_url: ""
-  auth_type: ""
-  project_domain: ""
-  user_domain: ""
-  project_name: ""
-  user_name: ""
-  password: ""
-  region_name: ""
+master_image: str(required=True)
+master_flavor: str(required=True)
+mysql: str(required=True)
+openstack_url: str(required=True)
+nova: include('nova_spec')
+
+---
+nova_spec:
+  auth_url: str(required=True)
+  auth_type: str(required=True)
+  project_domain: str(required=True)
+  user_domain: str(required=True)
+  project_name: str(required=True)
+  user_name: str(required=True)
+  password: str(required=True)
+  region_name: str(required=True)

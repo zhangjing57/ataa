@@ -1,0 +1,9 @@
+id: ""
+node_config:
+  - count: 2
+    image: de3410a7-3310-404a-bb01-e12c4d58008e
+    flavor_id: 27886561-0bd6-4137-b226-02cef94a4d2e
+    role: worker
+    type: vm
+    security_group: null
+depend_on: create_k8s_cluster

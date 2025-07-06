@@ -1,10 +1,14 @@
 import sqlite3
 import requests
+import pymysql
+import json
+from db.engines.sqlite import get_session
 
 
 class TaskService:
 
-    def get_task_info(self):
+    def get_task_info(self, cluster_id):
+        # 使用requests来获取集群的信息，然后拼凑结果返回给前端
         pass
 
     def update_task_info(self):
@@ -22,7 +26,7 @@ class TaskService:
         # 如果发现未开始就重新执行一遍启动任务的操作即可
         pass
 
-    def task_start(self, task_id):
+    def task_start(self, task_id, openstack_url=None):
         # 1、查看配置里面需要在哪些openstack环境进行自动化测试
         # 2、对这些openstack环境进行检测，看看这些的环境的一些参数配置是否存在，比如image和flavor（是放在这里还是放请求前）
         # 3、对每个openstack对应的配置文件都检查下参数是否合法

@@ -1,0 +1,10 @@
+id: str(required=True)
+node_config: list(include('node_spec'))
+
+---
+node_spec:
+  - count: int(min=1, required=True)
+    image: str(required=True)
+    flavor_id: str(required=True)
+    role: enum('master', 'worker', required=True)
+    type: enum('vm', 'baremetal', required=True)

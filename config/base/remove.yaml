@@ -1,0 +1,3 @@
+cluster_id: str(required=True)
+node_list: list(str())
+remove_node_count: int(min=1, required=True)

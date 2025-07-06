@@ -12,7 +12,8 @@ default_opts = [
     cfg.StrOpt('loglevel', default="Debug", help='the level of log'),
     cfg.StrOpt('log_path', default="", help='the path of log'),
     cfg.StrOpt('sqlite_path', default="", help='the path of sqlite file'),
-    cfg.ListOpt('api_url', default=[], help='the url of api request'),
+    cfg.ListOpt('openstack_url', default=[], help='the url of openstack'),
+    cfg.ListOpt('dingo_command_port', default=8887, help='the port of dingo_command service'),
 ]
 
 CONF.register_group(default_group)
