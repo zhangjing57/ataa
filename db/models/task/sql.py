@@ -33,11 +33,11 @@ class TaskSQL:
             # 查询语句
 
             # 数据库查询参数
-            if "task_id" in query_params and query_params["task_id"]:
-                query = query.filter(Task.task_id == query_params["task_id"])
-            if "cluster_id" in query_params and query_params["cluster_id"]:
-                query = query.filter(Task.cluster_id == query_params["cluster_id"])
-            query = query.order_by(Task.start_time.desc())
+            if "id" in query_params and query_params["id"]:
+                query = query.filter(Task.id == query_params["task_id"])
+            if "openstack_url" in query_params and query_params["openstack_url"]:
+                query = query.filter(Task.openstack_url == query_params["openstack_url"])
+            query = query.order_by(Task.create_time.desc())
             count = query.count()
             cluster_list = query.all()
             # 返回

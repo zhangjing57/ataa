@@ -1,4 +1,0 @@
-cluster_id: ""
-node_list: []
-remove_node_count: 2
-depend_on: create_k8s_cluster

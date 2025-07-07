@@ -1,0 +1,6 @@
+data:
+  cluster_id: ""
+type: classic
+operate:
+  - scale_classic_node
+  - delete_classic_cluster

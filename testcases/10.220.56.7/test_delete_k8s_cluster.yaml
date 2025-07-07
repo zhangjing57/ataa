@@ -1,0 +1,5 @@
+data:
+  cluster_id: ""
+type: kubernetes
+operate:
+  - delete_k8s_cluster

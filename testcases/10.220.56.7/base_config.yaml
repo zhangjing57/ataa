@@ -4,6 +4,9 @@ mysql: ""
 project_id: 294c4ae34a5843ebba117cf6a665cfcf
 user_id: 2861b2989a3746df86fb847b4ee95e68
 region_name: RegionOne
+scale_node_count: 1
+remove_node_count: 1
+openstack_url: 10.220.56.7
 nova:
   auth_url: ""
   auth_type: ""

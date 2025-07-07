@@ -1,0 +1,39 @@
+data: include('data_spec')
+
+---
+data_spec:
+  name: str(required=True)
+  project_id: regex(r'^[a-f0-9]{32}$', required=True)
+  user_id: regex(r'^[a-f0-9]{32}$', required=True)
+  region_name: str(required=True)
+  type: enum('kubernetes', 'baremetal', required=True)
+  port_forwards: list(include('port_rule'))
+  node_config: list(include('node_spec'))
+  kube_info: include('kube_config')
+
+---
+port_rule:
+  internal_port: int(min=1, max=65535, required=True)
+  protocol: enum('tcp', 'udp', required=True)
+
+---
+node_spec:
+  count: int(min=1, required=True)
+  image: regex(r'^[a-f0-9\-]{36}$', required=True)
+  flavor_id: regex(r'^[a-f0-9\-]{36}$', required=True)
+  role: enum('master', 'worker', required=True)
+  type: enum('vm', 'baremetal', required=True)
+  auth_type: enum('password', 'keypair', required=True)
+  user: str(required=False)
+  password: str(required=False)
+
+---
+kube_config:
+  cni: enum('calico', 'flannel', 'cilium', required=True)
+  pod_cidr: regex(r'^\d{1,3}(\.\d{1,3}){3}/\d{1,2}$', required=True)
+  runtime: enum('containerd', 'docker', required=True)
+  version: regex(r'^v?\d+\.\d+\.\d+$', required=True)
+  number_master: enum(1, 3, required=True)
+  service_cidr: regex(r'^\d{1,3}(\.\d{1,3}){3}/\d{1,2}$', required=True)
+  loadbalancer_enabled: bool(required=True)
+  kube_proxy_mode: enum('iptables', 'ipvs', required=True)

@@ -1,0 +1,7 @@
+data:
+  cluster_id: ""
+  node_list: []
+remove_node_count: 1
+type: classic
+operate:
+  - remove_classic_node

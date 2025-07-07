@@ -1,0 +1,33 @@
+data:
+  name: zj0702120-k8s
+  type: kubernetes
+  port_forwards:
+    - internal_port: 22
+      protocol: tcp
+    - internal_port: 23
+      protocol: udp
+    - internal_port: 24
+      protocol: udp
+  node_config:
+    - count: 3
+      image: de3410a7-3310-404a-bb01-e12c4d58008e
+      flavor_id: 27886561-0bd6-4137-b226-02cef94a4d2e
+      role: worker
+      type: vm
+      auth_type: keypair
+      user: root
+      password: ""
+  kube_info:
+    cni: calico
+    pod_cidr: 10.0.0.0/24
+    runtime: containerd
+    version: v1.32.0
+    number_master: 1
+    floating_ip: true
+    service_cidr: 10.233.0.0/18
+    loadbalancer_enabled: false
+    kube_proxy_mode: ipvs
+cluster_id: ""
+type: kubernetes
+operate:
+  - create_k8s_cluster

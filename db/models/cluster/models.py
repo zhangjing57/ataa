@@ -14,6 +14,7 @@ class Cluster(Base):
     status = Column(String(length=128), nullable=True)
     status_msg = Column(Text, nullable=True)
     operate = Column(String(length=128), nullable=True)
+    master_count = Column(Integer, nullable=True)
     node_count = Column(Integer, nullable=True)
     create_time = Column(DateTime, nullable=True)
     update_time = Column(DateTime, nullable=True)

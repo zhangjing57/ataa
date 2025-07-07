@@ -1,0 +1,5 @@
+data: include('data_spec')
+
+---
+data_spec:
+  cluster_id: str(required=True)

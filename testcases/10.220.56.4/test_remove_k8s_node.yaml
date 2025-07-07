@@ -1,0 +1,7 @@
+data:
+  cluster_id: ""
+  node_list: []
+remove_node_count: 1
+type: kubernetes
+operate:
+  - remove_k8s_node

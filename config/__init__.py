@@ -1,7 +1,8 @@
 from oslo_config import cfg
 # 读取config的信息
 CONF = cfg.CONF
-
+OPERATOR = ["create_k8s_cluster", "delete_k8s_cluster", "delete_classic_cluster", "create_classic_cluster",
+            "remove_k8s_node", "remove_classic_node", "scale_k8s_node", "scale_classic_node"]
 # 配置目录
 CONF(args=[], default_config_files = ['/etc/dingo-command/auto_test.conf'])
 

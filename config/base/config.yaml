@@ -3,6 +3,9 @@ master_flavor: str(required=True)
 mysql: str(required=True)
 openstack_url: str(required=True)
 nova: include('nova_spec')
+region_name: str(required=True)
+scale_node_count: int(min=1, required=True)
+remove_node_count: int(min=1, required=True)
 
 ---
 nova_spec:

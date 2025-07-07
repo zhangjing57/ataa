@@ -1,5 +1,9 @@
-id: str(required=True)
-node_config: list(include('node_spec'))
+data: include('data_spec')
+
+---
+data_spec:
+  id: str(required=True)
+  node_config: list(include('node_spec'))
 
 ---
 node_spec:

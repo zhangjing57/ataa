@@ -21,7 +21,6 @@ async def root():
     return {"message": "Welcome to the auto_test!"}
 
 app.include_router(api_router, prefix="/v1")
-FastLOG.info("fastapi start ....................")
 
 # 要有一个持续执行的获取真正的cluster的状态，它和结果是对应的，获取结果之后更新sqlite的数据库
 # 待添加代码

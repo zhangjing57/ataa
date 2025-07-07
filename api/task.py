@@ -2,6 +2,9 @@ from fastapi import APIRouter, BackgroundTasks
 from service.task import TaskService
 import time
 from db.engines.sqlite import get_session
+from config import CONF
+
+openstack_url_list = CONF.DEFAULT.openstack_url
 
 router = APIRouter()
 taskService = TaskService()
@@ -10,8 +13,17 @@ taskService = TaskService()
 @router.get("/task/start")
 async def task_start(background_tasks: BackgroundTasks):
     # 先判断下所有的配置文件的参数是否合法
+    # 针对每种类型的集群就只能操作对应的集群，否则不能生效，可以在这里判断下,只能有一个create集群，一个delete集群
+    response = taskService.check_task_args()
+    if not response[0] and not response[1]:
+        return {"status": "there are no tasks in testcases"}
+    if not response[0] and response[1]:
+        return {"status": f"there are some errors in config, reason: {','.join(response[1])}"}
     # 判断token能否获取，判断image和flavor是否存在
+    # 最好能控制在5秒之内返回
     try:
+        if not openstack_url_list:
+            return {"status": "openstack_url config arg is None, please set openstack_url config"}
         # 先判断下数据库中有没有正在进行的task任务
         # 如果有那就根据情况直接返回，如果是处于running的状态说明正在执行
         # 如果status为failed，就说明该任务已经失败，可以通过返回的错误信息，进行调整，然后重新执行
@@ -65,6 +77,18 @@ async def task_status_runtime(background_tasks: BackgroundTasks):
         cluster_info = None
         reponse = taskService.get_task_info(cluster_info)
         return reponse
+    except Exception as e:
+        import traceback
+        traceback.print_exc()
+        raise e
+
+@router.get("/task/stop")
+async def task_status():
+    try:
+        # 先从数据库中获取没有标记为deleted的任务
+        # 根据task的状态是running还是failed或者success，来标记任务是否应该deleted
+        task_id = f"task_{int(time.time())}"
+        return {"status": "Task started", "task_id": task_id}
     except Exception as e:
         import traceback
         traceback.print_exc()

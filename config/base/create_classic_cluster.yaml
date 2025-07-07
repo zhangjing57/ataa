@@ -1,11 +1,15 @@
-name: str(required=True)
-project_id: regex(r'^[a-f0-9]{32}$', required=True)
-user_id: regex(r'^[a-f0-9]{32}$', required=True)
-region_name: str(required=True)
-type: enum('kubernetes', 'baremetal', required=True)
-port_forwards: list(include('port_rule'))
-node_config: list(include('node_spec'))
-kube_info: list(include('kube_config'))
+data: include('data_spec')
+
+---
+data_spec:
+  name: str(required=True)
+  project_id: regex(r'^[a-f0-9]{32}$', required=True)
+  user_id: regex(r'^[a-f0-9]{32}$', required=True)
+  region_name: str(required=True)
+  type: enum('kubernetes', 'baremetal', required=True)
+  port_forwards: list(include('port_rule'))
+  node_config: list(include('node_spec'))
+  kube_info: include('kube_config')
 
 ---
 port_rule:

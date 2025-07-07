@@ -11,11 +11,7 @@ from db.models.cluster.models import Cluster
 
 from enum import Enum
 
-#链接数据库，可以使用配置文件进行定义
-# engine = create_engine("mysql+pymysql://root:HworLIIDvmTRsPfQauNskuJF8PcoTuULfu3dEHFg@10.220.56.254:3306/dingoops?charset=utf8mb3", echo=True)
 # 资产排序字段字典
-cluster_dir_dic= {"asset_type":Cluster.type,"create_time":Cluster.create_time,
-              "name":Cluster.name,"status":Cluster.status,"region_name":Cluster.region_name}
 class ClusterSQL:
 
     @classmethod
@@ -28,45 +24,21 @@ class ClusterSQL:
             # 查询语句
 
             # 数据库查询参数
-            if "exact_name" in query_params and query_params["exact_name"]:
-                query = query.filter(Cluster.name == query_params["exact_name"])
             if "name" in query_params and query_params["name"]:
                 query = query.filter(Cluster.name.like('%' + query_params["name"] + '%'))
             if "id" in query_params and query_params["id"]:
                 query = query.filter(Cluster.id == query_params["id"])
-            if "user_id" in query_params and query_params["user_id"]:
-               query = query.filter(Cluster.user_id == query_params["user_id"])
-            if "project_id" in query_params and query_params["project_id"]:
-                query = query.filter(Cluster.project_id == query_params["project_id"])
+            if "operate" in query_params and query_params["operate"]:
+                query = query.filter(Cluster.id == query_params["operate"])
+            if "openstack_url" in query_params and query_params["openstack_url"]:
+                query = query.filter(Cluster.id == query_params["openstack_url"])
             if "status" in query_params and query_params["status"]:
                 query = query.filter(Cluster.status.like('%' + query_params["status"] + '%'))
-            if "region_name" in query_params and query_params["region_name"]:
-                query = query.filter(Cluster.region_name.like('%' + query_params["region_name"] + '%'))
-            if "network_id" in query_params and query_params["network_id"]:
-                query = query.filter(Cluster.network_id == query_params["network_id"])
-            if "subnet_id" in query_params and query_params["subnet_id"]:
-                query = query.filter(Cluster.subnet_id == query_params["subnet_id"])
-            if "runtime" in query_params and query_params["runtime"]:
-                query = query.filter(Cluster.runtime.like('%' + query_params["runtime"] + '%'))
-            if "type" in query_params and query_params["type"]:
-                query = query.filter(Cluster.type.like('%' + query_params["type"] + '%'))
-            if "service_cidr" in query_params and query_params["service_cidr"]:
-                query = query.filter(Cluster.service_cidr.like('%' + query_params["service_cidr"] + '%'))
-            if "bus_address" in query_params and query_params["bus_address"]:
-                query = query.filter(Cluster.bus_address.like('%' + query_params["bus_address"] + '%'))
-            if "cni" in query_params and query_params["cni"]:
-                query = query.filter(Cluster.cni.like('%' + query_params["cni"] + '%'))
             # 总数
             query = query.filter(Cluster.status != "deleted")
             count = query.count()
             # 排序
-            if sort_keys is not None and sort_keys in cluster_dir_dic:
-                if sort_dirs == "ascend" or sort_dirs is None :
-                    query = query.order_by(cluster_dir_dic[sort_keys].asc())
-                elif sort_dirs == "descend":
-                    query = query.order_by(cluster_dir_dic[sort_keys].desc())
-            else:
-                query = query.order_by(Cluster.create_time.desc())
+            query = query.order_by(Cluster.create_time.desc())
             # 分页条件
             page_size = int(page_size)
             page_num = int(page)
@@ -98,10 +70,9 @@ class ClusterSQL:
             session.merge(cluster)
 
     @classmethod
-    def delete_cluster(cls, catalog, name):
+    def delete_cluster(cls, cluster):
         # Session = sessionmaker(bind=engine, expire_on_commit=False)
         # session = Session()
         session = get_session()
         with session.begin():
-            return session.query(AssetBasicInfo).filter(AssetBasicInfo.asset_category == catalog).filter(AssetBasicInfo.name == name).first()
-
+            session.delete(cluster)
